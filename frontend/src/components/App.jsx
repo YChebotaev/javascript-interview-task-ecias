@@ -15,12 +15,17 @@ export const App = () => {
     setUploadModalVisible(false);
   };
 
+  const handleUploadModalOk = () => {
+    window.location.reload();
+  };
+
   return (
     <div className="App">
       <AppMenu onUploadClick={handleAppMenuUploadClick} />
       <ListOfFiles />
       <UploadModal
         visible={uploadModalVisible}
+        onOk={handleUploadModalOk}
         onCancel={handleUploadModalCancel}
       />
     </div>

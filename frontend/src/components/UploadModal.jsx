@@ -3,33 +3,50 @@ import { ErrorAlert } from "./ErrorAlert";
 import { Modal, Form, Input, Upload, Button } from "antd";
 import { last, get } from "lodash";
 import axios from "axios";
-import { wait } from "../lib/wait";
+import { identity } from "lodash";
 
 export const UploadModal = Form.create({ name: "upload" })(
-  ({ visible, onCancel, form, form: { getFieldDecorator } }) => {
+  ({ visible, onCancel, onOk, form, form: { getFieldDecorator } }) => {
     const [pending, setPending] = useState(false);
     const [error, setError] = useState(null);
     const disabled = pending || Boolean(error);
+
+    const collectData = () => ({
+      title: form.getFieldValue("title"),
+      description: form.getFieldValue("description"),
+      fileUrl: get(last(form.getFieldValue("file")), "response.url")
+    });
 
     const handleModalOk = async () => {
       setPending(true);
       setError(null);
 
-      const data = {
-        title: form.getFieldValue("title"),
-        description: form.getFieldValue("description"),
-        fileUrl: get(last(form.getFieldValue("file")), "response.url")
-      };
+      const data = collectData();
 
       try {
         await axios.post(`${process.env.REACT_APP_ENDPOINT_BASE}/files`, data);
-
-        wait(10 * 1000);
+        onOk();
       } catch (error) {
         setError(error);
       } finally {
         setPending(false);
       }
+    };
+
+    const isOkButtonDisabled = () => {
+      const data = collectData();
+      const errors = form.getFieldsError();
+      // 1. Данные пусты
+      const dataIsEmpty = !Object.values(data).every(identity);
+      // 2. В данных есть ошибки
+      let dataHasErrors = false;
+      for (let value of Object.values(errors)) {
+        if (value) {
+          dataHasErrors = true;
+          break;
+        }
+      }
+      return [dataIsEmpty, dataHasErrors].some(identity);
     };
 
     const handleErrorAlertClose = () => {
@@ -42,6 +59,7 @@ export const UploadModal = Form.create({ name: "upload" })(
         visible={visible}
         okText="Upload"
         onOk={handleModalOk}
+        okButtonProps={{ disabled: isOkButtonDisabled() }}
         onCancel={onCancel}
       >
         <Form layout="vertical">

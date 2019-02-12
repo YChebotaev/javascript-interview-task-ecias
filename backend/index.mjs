@@ -17,8 +17,10 @@ app.post(
   cors(),
   fileUpload({
     useTempFiles: true,
+    abortOnLimit: true,
     limits: {
-      fileSize: 10 * 1024
+      files: 1,
+      fileSize: 1e7
     }
   }),
   function(req, res) {

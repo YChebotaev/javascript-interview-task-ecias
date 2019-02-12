@@ -37,7 +37,7 @@ export const UploadModal = Form.create({ name: "upload" })(
       const data = collectData();
       const errors = form.getFieldsError();
       // 1. Данные пусты
-      const dataIsEmpty = !Object.values(data).every(identity);
+      const dataIsEmpty = ![data.title, data.fileUrl].every(identity);
       // 2. В данных есть ошибки
       let dataHasErrors = false;
       for (let value of Object.values(errors)) {

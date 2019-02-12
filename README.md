@@ -55,6 +55,7 @@ npm start
 ## 3. Start backend
 
 ```shell
+cd backend
 npm install
 npm start
 ```

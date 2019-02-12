@@ -57,6 +57,16 @@ app.get("/files", cors(), async function(req, res) {
   res.json(files);
 });
 
+app.options("/files/:fileId", cors());
+
+app.delete("/files/:fileId", cors(), async function(req, res) {
+  const { fileId } = req.params;
+  await File.deleteOne({
+    _id: mongoose.Types.ObjectId.createFromHexString(fileId)
+  });
+  res.json({ ok: true });
+});
+
 app.listen(port, () => {
   console.log("App listening at port %s", port);
 });

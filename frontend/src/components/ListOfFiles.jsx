@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { List, Button } from "antd";
 import { ErrorAlert } from "./ErrorAlert";
 import axios from "axios";
+import { FileListItem } from "./FileListItem";
 
 export const ListOfFiles = () => {
   const [files, setFiles] = useState([]);
@@ -27,18 +27,7 @@ export const ListOfFiles = () => {
     setError(null);
   };
 
-  const renderFile = ({ _id, title, description, fileUrl }) => {
-    const handleDownloadFile = () => {
-      window.open(`${process.env.REACT_APP_ENDPOINT_BASE}${fileUrl}`, "_blank");
-    };
-
-    return (
-      <List.Item key={_id}>
-        <List.Item.Meta title={title} description={description} />
-        <Button onClick={handleDownloadFile}>Download</Button>
-      </List.Item>
-    );
-  };
+  const renderFile = props => <FileListItem {...props} key={props._id} />;
 
   return (
     <div className="ListOfFiles">

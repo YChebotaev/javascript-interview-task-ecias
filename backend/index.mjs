@@ -18,6 +18,7 @@ app.post(
   fileUpload({
     useTempFiles: true,
     abortOnLimit: true,
+    tempFileDir: `${process.cwd()}/upload`,
     limits: {
       files: 1,
       fileSize: 1e7
